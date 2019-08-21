@@ -47,7 +47,7 @@ class ClientController extends Controller {
         helper.success(ctx, resData);
     }
     // 创建访问记录
-    async create () {
+    async visit () {
         const { ctx, service } = this;
         const helper = ctx.helper;
         const params = ctx.request.body;
