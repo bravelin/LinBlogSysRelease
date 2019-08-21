@@ -53,6 +53,7 @@ module.exports = app => {
     // client端接口
     router.get('/api/client/articles', controller.client.articles);
     router.get('/api/client/phrases', controller.client.phrases);
+    router.post('/api/client/visit', controller.client.visit); // 创建访问记录
 
     // vue history模式
     router.get('/admin/*', controller.admin.index); // 管理端

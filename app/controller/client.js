@@ -46,6 +46,17 @@ class ClientController extends Controller {
         const resData = await service.phrase.query({ authorId, page, pageSize, searchKey, status, order, orderDir });
         helper.success(ctx, resData);
     }
+    // 创建访问记录
+    async create () {
+        const { ctx, service } = this;
+        const helper = ctx.helper;
+        const params = ctx.request.body;
+        if (!params.pagePath || !(params.pagePath + '').trim()) {
+            return helper.success(ctx, '', '访问路径不能为空！', 501);
+        }
+        const res = await service.visit.create(params);
+        helper.success(ctx, res.data, res.message, res.code);
+    }
 }
 
 module.exports = ClientController;

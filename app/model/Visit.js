@@ -5,6 +5,10 @@ module.exports = app => {
         articleId: {
             type: STRING,
             allowNull: false
+        },
+        pagePath: {
+            type: STRING,
+            allowNull: false
         }
     })
     return Visit

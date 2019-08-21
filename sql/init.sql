@@ -65,6 +65,7 @@ drop table if exists visit;
 create table visit (
     id char(32),
     articleId char(32),
+    pagePath varchar(500), 
     createdAt datetime,
     updatedAt datetime,
     primary key(id)
