@@ -1,0 +1,176 @@
+﻿<krpano version="1.19" title="赣州国际企业中心全景图">
+
+	<include url="skin/vtourskin.xml" />
+    <include url="loadinganimation.xml" />
+    <include url="loadingpercenttext.xml" />
+
+	<!-- customize skin settings: maps, gyro, webvr, thumbnails, tooltips, layout, design, ... -->
+	<skin_settings gyro="true"
+	               webvr="true"
+	               webvr_gyro_keeplookingdirection="false"
+	               webvr_prev_next_hotspots="true"
+	               littleplanetintro="true"
+	               title="true"
+	               thumbs="true"
+	               thumbs_width="120" thumbs_height="80" thumbs_padding="10" thumbs_crop="0|40|240|160"
+	               thumbs_opened="false"
+	               thumbs_text="false"
+	               thumbs_dragging="true"
+	               thumbs_onhoverscrolling="false"
+	               thumbs_scrollbuttons="false"
+	               thumbs_scrollindicator="false"
+	               thumbs_loop="false"
+	               tooltips_buttons="false"
+	               tooltips_thumbs="false"
+	               tooltips_hotspots="false"
+	               tooltips_mapspots="false"
+	               deeplinking="false"
+	               loadscene_flags="MERGE"
+	               loadscene_blend="OPENBLEND(0.5, 0.0, 0.75, 0.05, linear)"
+	               loadscene_blend_prev="SLIDEBLEND(0.5, 180, 0.75, linear)"
+	               loadscene_blend_next="SLIDEBLEND(0.5,   0, 0.75, linear)"
+	               loadingtext="loading..."
+	               layout_width="100%"
+	               layout_maxwidth="814"
+	               controlbar_width="-24"
+	               controlbar_height="40"
+	               controlbar_offset="20"
+	               controlbar_offset_closed="-40"
+	               controlbar_overlap.no-fractionalscaling="10"
+	               controlbar_overlap.fractionalscaling="0"
+	               design_skin_images="vtourskin.png"
+	               design_bgcolor="0x2D3E50"
+	               design_bgalpha="0.8"
+	               design_bgborder="0"
+	               design_bgroundedge="1"
+	               design_bgshadow="0 4 10 0x000000 0.3"
+	               design_thumbborder_bgborder="3 0xFFFFFF 1.0"
+	               design_thumbborder_padding="2"
+	               design_thumbborder_bgroundedge="0"
+	               design_text_css="color:#FFFFFF; font-family:Arial;"
+	               design_text_shadow="1"
+	               />
+
+	<!--
+	    For an alternative skin design either change the <skin_settings> values 
+	    from above or optionally include one of the predefined designs from below.
+	-->
+	<!-- <include url="skin/vtourskin_design_flat_light.xml"  /> -->
+	<!-- <include url="skin/vtourskin_design_glass.xml"       /> -->
+	<!-- <include url="skin/vtourskin_design_ultra_light.xml" /> -->
+	<!-- <include url="skin/vtourskin_design_117.xml"         /> -->
+	<!-- <include url="skin/vtourskin_design_117round.xml"    /> -->
+	<!-- <include url="skin/vtourskin_design_black.xml"       /> -->
+
+
+	<!-- startup action - load the first scene -->
+	<action name="startup" autorun="onstart">
+		if(startscene === null OR !scene[get(startscene)], copy(startscene,scene[0].name); );
+		loadscene(get(startscene), null, MERGE);
+		if(startactions !== null, startactions() );
+	</action>
+
+    <!-- container layer -->
+	<layer keep="true" name="mapcontainer" type="container" bgcolor="0x000000" bgalpha="0.1" align="righttop" x="5" y="5" width.normal="270" height.normal="370" width.mobile="200" height.mobile="250">
+
+		<!-- maps plugin - use Google for HTML5 and Bing for Flash -->
+		<plugin name="map"
+                keep="true"
+                maps_type="google"
+                maps_google_api_key="AIzaSyBS1p0Z2ibsrbtNsH6Co7ytQgL_ObYfs_E"
+                mapsapi="http://maps.google.cn"
+		        url.html5="%SWFPATH%/plugins/googlemaps.js"
+		        url.flash="%SWFPATH%/plugins/bingmaps.swf"
+		        key.html5="AIzaSyBS1p0Z2ibsrbtNsH6Co7ytQgL_ObYfs_E"
+		        key.flash="AIzaSyBS1p0Z2ibsrbtNsH6Co7ytQgL_ObYfs_E"
+		        maptype="normal"
+                language="zh-CN"
+		        lat="25.8588856454"
+                lng="114.8960655928"
+                zoom="15"
+		        align="lefttop"
+                x="10"
+                y="10"
+                width="-20"
+                height="-20"
+		    >
+			<radar visible="true" size="300" alpha="0.33" fillcolor="0x6666FF" fillalpha="0.3" linecolor="0x00FF00" linealpha="0.5" linewidth="0.5" dragable="true" headingoffset="0" />
+			<spot name="spot1" lat="25.8588856454" lng="114.8960655928" heading="0" active="true" />
+		</plugin>
+	</layer>
+
+    <autorotate enabled="true" waittime="2.0" speed="-5.0" horizon="0.0"/>
+    <events name="onautorotateevents" keep="true" onautorotateoneround="nextscene()"/>
+    <action name="nextscene">
+	    autorotate.stop();wait(0);
+	    set(ns, get(scene[get(xml.scene)].index));
+	    set(maxs, get(scene.count));
+	    add(ns,1);
+	    if(ns == maxs, set(ns,0));
+	    loadscene(get(scene[get(ns)].name), null, MERGE, BLEND(1.5));
+	    autorotate.start();
+    </action>
+	
+	<scene name="scene_PANO0001" title="国际企业中心园区" onstart="" havevrimage="true" thumburl="panos/PANO0001.tiles/thumb.jpg" lat="" lng="" heading="">
+        <view hlookat="112.675" vlookat="0.611" fovtype="MFOV" fov="120.000" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+		<preview url="panos/PANO0001.tiles/preview.jpg" />
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="4608" tiledimageheight="4608">
+				<cube url="panos/PANO0001.tiles/%s/l3/%v/l3_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="2304" tiledimageheight="2304">
+				<cube url="panos/PANO0001.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1152" tiledimageheight="1152">
+				<cube url="panos/PANO0001.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+		<image if="webvr.isenabled">
+			<cube url="panos/PANO0001.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="142.679" atv="17.945" linkedscene="scene_pano0003" />
+		<hotspot name="spot2" style="skin_hotspotstyle" ath="-127.494" atv="22.768" linkedscene="scene_pano0002" />
+	</scene>
+
+	<scene name="scene_PANO0002" title="PANO0002" onstart="" havevrimage="true" thumburl="panos/PANO0002.tiles/thumb.jpg" lat="" lng="" heading="">
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+		<preview url="panos/PANO0002.tiles/preview.jpg" />
+
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="4608" tiledimageheight="4608">
+				<cube url="panos/PANO0002.tiles/%s/l3/%v/l3_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="2304" tiledimageheight="2304">
+				<cube url="panos/PANO0002.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1152" tiledimageheight="1152">
+				<cube url="panos/PANO0002.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+
+		<image if="webvr.isenabled">
+			<cube url="panos/PANO0002.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="109.892" atv="52.100" linkedscene="scene_pano0001" />
+	</scene>
+
+	<scene name="scene_PANO0003" title="PANO0003" onstart="" havevrimage="true" thumburl="panos/PANO0003.tiles/thumb.jpg" lat="" lng="" heading="">
+		<view hlookat="0.0" vlookat="0.0" fovtype="MFOV" fov="120" maxpixelzoom="2.0" fovmin="70" fovmax="140" limitview="auto" />
+		<preview url="panos/PANO0003.tiles/preview.jpg" />
+		<image type="CUBE" multires="true" tilesize="512" if="!webvr.isenabled">
+			<level tiledimagewidth="4608" tiledimageheight="4608">
+				<cube url="panos/PANO0003.tiles/%s/l3/%v/l3_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="2304" tiledimageheight="2304">
+				<cube url="panos/PANO0003.tiles/%s/l2/%v/l2_%s_%v_%h.jpg" />
+			</level>
+			<level tiledimagewidth="1152" tiledimageheight="1152">
+				<cube url="panos/PANO0003.tiles/%s/l1/%v/l1_%s_%v_%h.jpg" />
+			</level>
+		</image>
+		<image if="webvr.isenabled">
+			<cube url="panos/PANO0003.tiles/vr/pano_%s.jpg" />
+		</image>
+		<hotspot name="spot1" style="skin_hotspotstyle" ath="-49.660" atv="40.611" linkedscene="scene_pano0001" />
+	</scene>
+</krpano>
