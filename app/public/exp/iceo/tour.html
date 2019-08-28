@@ -10,22 +10,162 @@
 	<style>
 		@-ms-viewport { width:device-width; }
 		@media only screen and (min-device-width:800px) { html { overflow:hidden; } }
-		html { height:100%; }
-		body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-color:#000000; }
+		html { height:100%; width: 100%; }
+		body { height:100%; width: 100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-image: linear-gradient(to bottom right, #7A88FF, #ffffff); }
         .gm-style-mtc, .gmnoprint{ display: none }
         .gm-style.gm-china>div:nth-of-type(2){ display: none; }
+        .map-wrap{
+            top: 0;
+            transition: all 0.45s ease-out;
+        }
+        .map-hide{
+            top: -400px !important;
+        }
+        .map-switch{
+            width: 48px;
+            height: 116px;
+            position: fixed;
+            top: 50%;
+            right: 10px;
+            background-image: url("icons/01.png");
+            z-index: 999;
+            background-size: 100% 100%;
+            cursor: pointer;
+            opacity: 0;
+        }
+        .map-switch.off{
+            background-image: url("icons/02.png");
+        }
+        .pop-wrap{
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            line-height: 2.2;
+            font-size: 15px;
+        }
+        .pop-wrap.active{
+            display: flex;
+        }
+        .pop-content{
+            width: 90%;
+            max-width: 800px;
+            max-height: 70%;
+            padding: 4px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.35);
+            opacity: 0;
+            overflow-y: auto;
+            transform: scale(0,0);
+            transform-origin: center center;
+            text-indent: 30px;
+            transition: transform 0.35s ease-out, opacity 0.4s linear;
+        }
+        .pop-content.active{
+            opacity: 1;
+            transform: scale(1,1);
+        }
     </style>
 </head>
 <body>
 
+<div id="loadinginfo" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:10px;pointer-events:none;z-index:2;font-size:14px;"><br>please wait...<br></div>
 <script src="tour.js"></script>
 
 <div id="pano" style="width:100%;height:100%;">
 	<noscript><table style="width:100%;height:100%;"><tr style="vertical-align:middle;"><td><div style="text-align:center;">ERROR:<br/><br/>Javascript not activated<br/><br/></div></td></tr></table></noscript>
-	<script>
-		embedpano({swf:"tour.swf", xml:"tour.xml", target:"pano", html5:"auto", mobilescale:1.0, passQueryParameters:true});
-	</script>
+    <script>
+        var krpano = null;
+        var mapContainer = null;
+        var mapObj = null;
+        var ready = false;
+        var mapStatus = true;
+        var popWrap = null;
+        var popContent = null;
+		embedpano({swf:"tour.swf", xml:"tour.xml", target:"pano", html5:"auto", mobilescale:1.0, passQueryParameters:true, onready:krpano_onready_callback});
+		// 在krpano嵌入到html且可使用时执行回调函数
+		function krpano_onready_callback(krpano_interface)
+		{
+		  krpano = krpano_interface;
+		  krpano.set("events[loadtext].keep", "true");
+          krpano.set("events[loadtext].onloadcomplete", "jscall('document.body.removeChild(loadinginfo)'); set(events[loadtext].onloadcomplete,null); ");
+          ready = true;
+          if (mapContainer) {
+              doShowMap();
+          }
+        }
+        var timer = setInterval(function () {
+            mapObj = document.querySelector('div.gm-style.gm-china')
+            if (mapObj) {
+                clearInterval(timer);
+                mapContainer = mapObj.parentElement.parentElement.parentElement.parentElement;
+                mapContainer.classList.add('map-wrap');
+                if (ready) {
+                    doShowMap();
+                }
+            }
+        }, 100)
+
+        function doShowMap () {
+            popWrap = document.getElementById('pop-wrap');
+            popContent = document.getElementById('pop-content');
+
+            popWrap.addEventListener('click', function () {
+                hidePop();
+            })
+            popContent.addEventListener('click', function (e) {
+                e.stopPropagation()
+            })
+            setTimeout(function () {
+                // mapContainer.style.cssText = mapContainer.style.cssText.replace('opacity: 1', 'opacity: 1 !important');
+                var switchEl = document.querySelector('.map-switch'); 
+                switchEl.style.opacity = 1;
+                switchEl.onclick = function () {
+                    if (mapStatus) {
+                        switchEl.classList.add('off');
+                        mapContainer.classList.add('map-hide');
+                    } else {
+                        switchEl.classList.remove('off');
+                        mapContainer.classList.remove('map-hide');
+                    }
+                    mapStatus = !mapStatus;
+                }
+            }, 5500)
+        }
+	
+        function showPop (type) {
+            console.log(type)
+            if (type == 'yufengtek') {
+                popContent.innerHTML = `<p>江西裕丰智能农业科技有限公司(简称江西裕丰智农)是专注于智慧农业领域的高新技术企业，旨在将“物联网、人工智能、大数据、云计算”技术与农业生产经营相结合，为农业生产者提供从生产到销售，涵盖生产前智能设备搭建、生产中技术服务提供、生产后对接销售的全产业链“智慧农业”整体解决方案。我们努力让农业从粗放、盲目向精准、科学的方式转型，让农业变得更智能、更精准、更高效，促进农产品安全与品质提升，帮助农业生产者最大化土地产值与利润，保障消费者购买到安全放心的农产品。</p><p>公司创始团队曾就职于全球知名IT互联网企业和农业研究机构，具有丰富的物联网、大数据和农业领域的从业经验，是一支典型的跨IT、农业、互联网领域的团队。公司员工都是高学历的创新型人才，我们有专业的中高级IT工程师为软件开发提供技术支持，还有专业的植保无人机飞行手为智慧农业发展保驾护航。</p>`
+            } else {
+                popContent.innerHTML = `<p>赣州国际企业中心位于赣州市经济技术开发区华坚北路与香江大道交汇处，距离赣州黄金机场约12公里，厦蓉高速公路3.5公里。创业办公环境十分优越，项目总建筑面积21.3万平米，是集科技孵化企业、服务外包企业、高端配套产业及都市型企业、区域性中小企业总部基地、文化创意等现代服务业为一体的综合型产业园区！</p><p>赣州国际企业中心秉持“小资源、大产出”的总部型经济理念，计划将引进500家企业入园办公，不同类型、不同发展阶段的企业集聚在园区创业发展，在产生税收效应的同时，将带来大量高管和核心技术岗位就业，对创业就业及延伸产业带动能力强。园区自运营以来，入驻企业达375家。作为赣州首个集“产、学、研”于一体的总部经济产业园，园区以培育中小企业为核心先导，依托具有独立知识产权的“云科技共享中心”，致力于建设一个现代化、国际化、创新型、生态型的总部经济产业园，积极为入园企业搭建一个集聚发展的平台，助力园区企业走向腾飞！</p><p>赣州国际企业中心以双生态园区推动总部企业集聚、为大学生创业就业搭建平台、助推中小企业创业、持续提升税收贡献效应和科技成果转化。园区汇聚了多家具有代表性科技型企业——慧通力合信息技术、九维3D打印、菲客无人机、裕丰智能农业科技；金融企业——积木盒子、趣分期，致力于不同领域的金融企业的进驻，为园区企业发展提供更多样、更快捷的金融服务渠道；以及电商企业——最惠购、冠宏亚太电子商务等企业共同发展。通过园区创新的八大服务平台来助力企业得到更好的发展，有利地搭建了“大众创业 万众创新”的良好平台，让企业来这里办公，创业更简单！</p>`
+            }
+            popWrap.classList.add('active')
+            setTimeout(function () {
+                popContent.classList.add('active')
+            }, 300)
+        }
+        function hidePop () {
+            popContent.classList.remove('active')
+            setTimeout(function () {
+                popWrap.classList.remove('active')
+            }, 500)
+        }
+    </script>
 </div>
 
+<div class="map-switch"></div>
+
+<div class="pop-wrap" id="pop-wrap">
+    <div class="pop-content" id="pop-content">
+    </div>
+</div>
 </body>
 </html>
