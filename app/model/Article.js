@@ -2,6 +2,10 @@ const db = require('../db')
 module.exports = app => {
     const { STRING, INTEGER } = app.Sequelize
     const Article = db.defineModel(app, 'article', {
+        id: {
+            type: INTEGER,
+            primaryKey: true
+        },
         title: {
             type: STRING,
             allowNull: false
